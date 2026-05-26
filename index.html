@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Institucional - INVIAS</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            /* Fondo base institucional */
+            background: linear-gradient(rgba(0, 31, 61, 0.4), rgba(0, 31, 61, 0.4)), url('BIENVENIDA.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* --- CONTENEDOR MATE --- */
+        .game-container {
+            background: rgba(255, 255, 255, 0.45); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 580px;
+            min-height: 500px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            z-index: 1;
+        }
+
+        .screen {
+            display: none;
+            padding: 40px 25px;
+            width: 100%;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .logo-top {
+            max-width: 220px;
+            margin-bottom: 25px;
+        }
+
+        .welcome-title {
+            color: #002447;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .welcome-desc {
+            color: #1a202c;
+            font-size: 1.05rem;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            font-weight: 600;
+            text-align: justify;
+        }
+
+        /* --- INTERFAZ DE TRIVIA --- */
+        .station-indicator {
+            background-color: #003366;
+            color: #ffcc00;
+            padding: 8px 24px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: rgba(0, 36, 71, 0.2);
+        }
+
+        .dot.active {
+            background-color: #ffcc00;
+            border: 2px solid #003366;
+            transform: scale(1.25);
+        }
+
+        .dot.correct {
+            background-color: #28a745;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            color: #002447;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Botones de opciones estilo glass-white */
+        .option-btn {
+            background-color: rgba(255, 255, 255, 0.75); 
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            padding: 15px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: left;
+            color: #1a202c;
+            transition: all 0.2s ease;
+            line-height: 1.3;
+        }
+
+        .option-btn:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: #003366;
+            transform: translateX(5px);
+        }
+
+        .option-btn.success-blink { background-color: #28a745 !important; color: white !important; border-color: #218838 !important; }
+        .option-btn.error-blink { background-color: #dc3545 !important; color: white !important; border-color: #bd2130 !important; }
+
+        .btn-comenzar {
+            background-color: #ffcc00;
+            color: #003366;
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 35px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        /* --- PANTALLA FINAL --- */
+        #final-victory-screen {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(0, 31, 61, 0.75), rgba(0, 31, 61, 0.75));
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .img-felicitaciones-final {
+            max-width: 90%;
+            max-height: 60vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .btn-premio-final {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+            text-transform: uppercase;
+            transition: transform 0.2s;
+        }
+
+        .btn-premio-final:hover {
+            transform: scale(1.05);
+            background-color: #218838;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-msg { margin-top: 15px; font-weight: 700; min-height: 26px; }
+    </style>
+</head>
+<body>
+
+    <div id="final-victory-screen">
+        <img src="FELICITACIONES.png" class="img-felicitaciones-final" alt="¡Felicitaciones!">
+        <button class="btn-premio-final" onclick="entregarPremio()">RECLAMA TU PREMIO</button>
+    </div>
+
+    <div class="game-container">
+        
+        <div id="screen-welcome" class="screen active">
+            <img src="LOGO INVIAS.png" class="logo-top" alt="Logo INVIAS">
+            <h1 class="welcome-title">TRIVIA DE INFRAESTRUCTURA</h1>
+            <p class="welcome-desc">Demuestra tus conocimientos superando las 3 estaciones viales (Básica, Intermedia y Avanzada). Responde correctamente las rondas de preguntas analíticas relacionadas a la <strong>SUBDIRECCION DE PROCESOS DE SELECCION CONTRACTUAL</strong>.</p>
+            <button class="btn-comenzar" onclick="iniciarJuego()">COMENZAR</button>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <img src="LOGO INVIAS.png" class="logo-top" alt="Logo INVIAS">
+            <br>
+            <div id="station-tag" class="station-indicator">Cargando estación...</div>
+            
+            <div class="progress-dots">
+                <div class="dot active" id="dot-0"></div>
+                <div class="dot" id="dot-1"></div>
+                <div class="dot" id="dot-2"></div>
+            </div>
+
+            <div id="question" class="question-text">Cargando enunciado...</div>
+            
+            <div id="options" class="options-container"></div>
+            <div id="feedback" class="feedback-msg"></div>
+        </div>
+
+    </div>
+
+    <script src="questions.js?v=5"></script>
+    <script src="app.js?v=5"></script>
+</body>
+</html>
